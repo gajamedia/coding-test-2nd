@@ -1,51 +1,53 @@
-import os
 from typing import List
 from pydantic_settings import BaseSettings
+from pydantic import Field
 
 
 class Settings(BaseSettings):
     # OpenAI API configuration
-    openai_api_key: str = os.getenv("OPENAI_API_KEY", "")
-    
+    openai_api_key: str = Field(..., alias="OPENAI_API_KEY")
+
     # Vector database configuration
-    vector_db_path: str = os.getenv("VECTOR_DB_PATH", "./vector_store")
-    vector_db_type: str = os.getenv("VECTOR_DB_TYPE", "chromadb")
-    
+    vector_db_path: str = Field(default="./vector_store", alias="VECTOR_DB_PATH")
+    vector_db_type: str = Field(default="chromadb", alias="VECTOR_DB_TYPE")
+
     # PDF upload path
-    pdf_upload_path: str = os.getenv("PDF_UPLOAD_PATH", "../data")
-    
+    pdf_upload_path: str = Field(default="../data", alias="PDF_UPLOAD_PATH")
+
     # Embedding model configuration
-    embedding_model: str = os.getenv("EMBEDDING_MODEL", "text-embedding-ada-002")
-    
+    embedding_model: str = Field(default="text-embedding-ada-002", alias="EMBEDDING_MODEL")
+
     # LLM configuration
-    llm_model: str = os.getenv("LLM_MODEL", "gpt-3.5-turbo")
-    llm_temperature: float = float(os.getenv("LLM_TEMPERATURE", "0.1"))
-    max_tokens: int = int(os.getenv("MAX_TOKENS", "1000"))
-    
+    llm_model: str = Field(default="gpt-3.5-turbo", alias="LLM_MODEL")
+    llm_temperature: float = Field(default=0.1, alias="LLM_TEMPERATURE")
+    max_tokens: int = Field(default=1000, alias="MAX_TOKENS")
+
     # Chunking configuration
-    chunk_size: int = int(os.getenv("CHUNK_SIZE", "1000"))
-    chunk_overlap: int = int(os.getenv("CHUNK_OVERLAP", "200"))
-    
+    chunk_size: int = Field(default=1000, alias="CHUNK_SIZE")
+    chunk_overlap: int = Field(default=200, alias="CHUNK_OVERLAP")
+
     # Retrieval configuration
-    retrieval_k: int = int(os.getenv("RETRIEVAL_K", "5"))
-    similarity_threshold: float = float(os.getenv("SIMILARITY_THRESHOLD", "0.7"))
-    
+    retrieval_k: int = Field(default=5, alias="RETRIEVAL_K")
+    similarity_threshold: float = Field(default=0.7, alias="SIMILARITY_THRESHOLD")
+
     # Server configuration
-    host: str = os.getenv("HOST", "0.0.0.0")
-    port: int = int(os.getenv("PORT", "8000"))
-    debug: bool = os.getenv("DEBUG", "True").lower() == "true"
-    
+    host: str = Field(default="0.0.0.0", alias="HOST")
+    port: int = Field(default=8000, alias="PORT")
+    debug: bool = Field(default=True, alias="DEBUG")
+
     # CORS configuration
-    allowed_origins: List[str] = os.getenv(
-        "ALLOWED_ORIGINS", 
-        "http://localhost:3000,http://127.0.0.1:3000"
-    ).split(",")
-    
+    allowed_origins: List[str] = Field(default=["http://localhost:3000", "http://127.0.0.1:3000"], alias="ALLOWED_ORIGINS")
+
     # Logging configuration
-    log_level: str = os.getenv("LOG_LEVEL", "INFO")
-    
-    class Config:
-        env_file = ".env"
+    log_level: str = Field(default="INFO", alias="LOG_LEVEL")
+
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": True,
+        "extra": "allow",
+        "populate_by_name": True,  # agar bisa gunakan nama field di kode
+    }
 
 
-settings = Settings() 
+settings = Settings()
